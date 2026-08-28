@@ -43,10 +43,4 @@ def verify_access_token(token:str)-> dict:
     except JWTError:
         return credentials_exception
 
-blacklist=set()
 
-def is_token_blacklisted(token: str) -> bool:
-    return token in blacklist
-
-def blacklist_token(token:str):
-    blacklist.add(token)

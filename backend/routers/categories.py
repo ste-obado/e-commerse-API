@@ -1,0 +1,2 @@
+#POST   /categories
+#GET    /categories
