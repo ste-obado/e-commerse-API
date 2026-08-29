@@ -16,7 +16,7 @@ router=APIRouter(prefix="/profile",tags=["User"])
 def accounr_view(user:User=Depends(get_current_user),db:Session=Depends(get_db)):
     View=db.query(User).filter(User.id==user.id).first()
     if not View :
-         HTTPException(status=404,detail="'USER NOT FOUND")
+       raise   HTTPException(status=404,detail="'USER NOT FOUND")
     return{"Username" : View.Username,
            "Email":View.Email,
            "Role":View.Role,
@@ -28,7 +28,7 @@ def accounr_view(user:User=Depends(get_current_user),db:Session=Depends(get_db))
 def accounr_view(user2:update_profile,user:User=Depends(get_current_user),db:Session=Depends(get_db)):
     user_data=db.query(User).filter(User.id==user.id).first()
     if not user:
-         HTTPException(status=404,detail="'USER NOT FOUND")
+        raise  HTTPException(status=404,detail="'USER NOT FOUND")
 
     updated_data=user2.model_dump(exclude=True)
     if "email" in updated_data:

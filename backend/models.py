@@ -4,6 +4,7 @@ import uuid
 from sqlalchemy import DECIMAL,Numeric,Column,String,Column,ForeignKey,Integer,DateTime,TIMESTAMP,func,Enum,Boolean,Time
 from datetime import timezone
 
+
 #######################
 #USER TABLE
 class User(Base):
@@ -12,6 +13,7 @@ class User(Base):
     Username=Column(String(50),nullable=False)
     Email=Column(String(50),nullable=False,unique=True)
     Role=Column(String(20),nullable=False)
+    password=Column(String(30),nullable=False)
     created_at=Column(DateTime(timezone=True),server_default=func.now())
     updated_at=Column(DateTime(timezone=True),server_default=func.now(),onupdate=func.now())
     IsActive=Column(Boolean,default=True)
@@ -78,6 +80,7 @@ class Reviews(Base):
     __tablename__='review'
     id = Column(Integer,primary_key=True,autoincrement=True)
     product_id=Column(Integer,ForeignKey("product.id"))
+    user_id=Column(Integer,ForeignKey("user.id"))
     review=Column(String(200),nullable=False)
     
 #######################
