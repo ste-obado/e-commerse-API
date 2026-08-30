@@ -30,18 +30,28 @@ class Category(Base):
 #CART TABLE
 class Cart(Base):
     __tablename__='cart'
-    id=Column(Integer,primary_key=True,autoincrement=True)
-    Product_id=Column(Integer,ForeignKey("product.id"))
+    Cart_id=Column(Integer,primary_key=True,autoincrement=True)
     User_id=Column(String(50),ForeignKey("user.id"))
+    created_at=Column(DateTime(timezone=True),server_default=func.now())
 
+
+class Cart_items(Base):
+   __tablename__='cart items'
+   Cart_items_id=Column(Integer,primary_key=True,autoincrement=True)
+   Cart_id=Column(Integer,ForeignKey("cart.id"))
+   Product_id=Column(Integer,ForeignKey("products.id"))
+   Quantity=Column(Integer,autoincrement=True,default=0)
+  
+       
 
 #######################
 #PRODUCTS TABLE
 class Product(Base):
-    __tablename__='product'
+    __tablename__='products'
     id = Column(Integer,primary_key=True,autoincrement=True)
     Category_id=Column(Integer,ForeignKey("category.id"))
     P_name=Column(String(50),nullable=False)
+    #image=Column(HttpUrl)
     description=Column(String(200),nullable=False)
     price=Column(Numeric(10,2),nullable=False,nullable=0.00)
     stock=Column(Integer,nullable=False,default=0)
@@ -52,7 +62,7 @@ class Product(Base):
 #######################
 #ORDER TABLE
 class Order(Base):
-    __tablename__='order'
+    __tablename__='orders'
 
     id = Column(Integer,primary_key=True,autoincrement=True)
     user_id=Column(Integer,ForeignKey("category.id"))
@@ -65,7 +75,7 @@ class Order(Base):
 #######################
 #ORDER ITEMS TABLE
 class Order_items(Base):
-      __tablename__='order_item'
+      __tablename__='order_items'
       id = Column(Integer,primary_key=True,autoincrement=True)
       order_id=Column(Integer,ForeignKey("order.id"))
       product_id=Column(Integer,ForeignKey("product.id"))
@@ -77,7 +87,7 @@ class Order_items(Base):
 #######################
 #REVIEWS TABLE
 class Reviews(Base):
-    __tablename__='review'
+    __tablename__='reviews'
     id = Column(Integer,primary_key=True,autoincrement=True)
     product_id=Column(Integer,ForeignKey("product.id"))
     user_id=Column(Integer,ForeignKey("user.id"))

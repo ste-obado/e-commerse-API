@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from core.protection  import get_current_user,require_user_or_admin
 from models import Reviews,User
-from schema import review
+from schema import review,UserRole
 
 
 
@@ -48,8 +48,12 @@ def delete_comment(reviews_id:int,user:User = Depends(require_user_or_admin),
    if del_comment is None:
         raise HTTPException(status_code=404,detail="comment not found")
 
-   if del_comment.user_id != user.id :
-      return {"message":"unable to delete"}
+  
+   if del_comment.user_id != user.id and user.role != UserRole.admin:
+        raise HTTPException(
+            status_code=403,
+            detail="You cannot delete this review"
+        )
 
    
    db.delete(del_comment)

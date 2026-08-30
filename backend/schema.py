@@ -66,7 +66,16 @@ class review(BaseModel):
      comment:str
      stars:int
 
+
+class add_cart(BaseModel):
+     product_id:int
+     quantity:int
+
+class Update_cart(BaseModel):
+     quantity:Optional[int]=None
+
      
+          
 
      class Config:
               from_attributes = True 

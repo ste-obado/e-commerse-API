@@ -30,7 +30,7 @@ def accounr_view(user2:update_profile,user:User=Depends(get_current_user),db:Ses
     if not user:
         raise  HTTPException(status=404,detail="'USER NOT FOUND")
 
-    updated_data=user2.model_dump(exclude=True)
+    updated_data=user2.model_dump(exclude_unset=True)
     if "email" in updated_data:
          email_existance=db.query(User).filter(User.Email==updated_data["email"]).first()
          if email_existance :
