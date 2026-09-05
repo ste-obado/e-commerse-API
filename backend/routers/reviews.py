@@ -12,8 +12,9 @@ from schema import review,UserRole
 
 router=APIRouter(prefix="/Review",tags=["Review"])
 
-
+################################
 #any user can add a have a review 
+
 @router.post("/review/{post_id}")
 def comment_product(product_id:str,content:review,
                     db:Session=(Depends(get_db)),user:User=Depends(get_current_user)):
@@ -30,6 +31,7 @@ def comment_product(product_id:str,content:review,
    db.refresh(new_comment)
    return new_comment
 
+###############################
 #users can view other comments
 
 @router.get("get_review")
@@ -37,8 +39,9 @@ def get_reviews(product_id:str,db:Session = Depends(get_db),user:User=Depends(ge
    content=db.query(Reviews).filter(Reviews.product_id == product_id).all()
    return content
 
-
+###############################
 #the admin/user  can delete posts
+
 @router.delete("/del_review")
 def delete_comment(reviews_id:int,user:User = Depends(require_user_or_admin),
                    db:Session = Depends(get_db)):

@@ -13,10 +13,15 @@ from database import get_db
 from core.protection  import get_current_user,require_user,credentials_exception
 from models import User,Product,Cart,Cart_items
 from schema import add_cart,Update_cart
+from utils.Authcheck import check_ownership
 
 
 
 router=APIRouter(prefix="/cart",tags=["Cart"])
+
+#######################
+#add cart items
+
 @router.post("/add_to_cart")
 def add_cart(cart:add_cart,user:User=Depends(require_user),db:Session=Depends(get_db)):
     exist_product=db.query(Product).filter(Product.id==cart.product_id).first()
@@ -43,6 +48,8 @@ def add_cart(cart:add_cart,user:User=Depends(require_user),db:Session=Depends(ge
         "message":f"product{db_add_cart.Product_id} added to cart"
     }
 
+###################
+#get cart items
 
 @router.get("/cart_items")
 def get_cart(user:User=Depends(require_user), db:Session=Depends(get_db)):
@@ -63,6 +70,8 @@ def get_cart(user:User=Depends(require_user), db:Session=Depends(get_db)):
     "total_price": item_total
 }
 
+###################
+#update cart items
 
 @router.patch("/update_cart")
 def update_cart(product_id:int,cart2:Update_cart,user:User=Depends(require_user),db:Session=Depends(get_db)):
@@ -104,8 +113,8 @@ def delete_product(product_id:int,user:User = Depends(require_user),
    if remove_product is None:
         raise HTTPException(status_code=404,detail="product not found")
 
-   if remove_product.user_id != user.id :
-         raise HTTPException(status=403,detail='unable to delete')
+    
+   check_ownership(remove_product.user_id, user)
 
    db.delete(remove_product)
    db.commit()

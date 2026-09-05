@@ -12,6 +12,9 @@ from core.security import verify_password,hash_password,create_access_token
 
 router=APIRouter(prefix="/Register",tags=["Auth"])
 
+####################33333333333333
+#register new user
+
 @router.post("/Sign_up")
 def user_register (newuser:register,db:Session=Depends(get_db)):
     user_verify=db.query(User).filter(User.Email==newuser.email).first()
@@ -29,6 +32,9 @@ def user_register (newuser:register,db:Session=Depends(get_db)):
     return{
         'MESSAGE':"account created succesfully"
      }
+
+############################
+#login user
 
 @router.post("/login")
 def user_login(user_login:OAuth2PasswordRequestForm=Depends(),

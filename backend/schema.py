@@ -74,8 +74,34 @@ class add_cart(BaseModel):
 class Update_cart(BaseModel):
      quantity:Optional[int]=None
 
-     
-          
 
-     class Config:
+class add_category(BaseModel):
+     C_name:str
+
+class Update_category(BaseModel):
+     C_name:Optional[str]=None
+
+
+class add_product(BaseModel):
+        cartegory_id:int
+        P_name:str
+        price:float
+        description:str
+        stock:int
+
+class Update_product(BaseModel):
+        cartegory_id:Optional[int]= None
+        P_name:str | None =None
+        price:float | None =None
+        description:str | None = None
+        stock:int | None =None
+
+class Get_products(BaseModel):
+        category_id: int | None = None
+        search: str | None = None
+        min_price: float | None = None
+        max_price: float | None = None
+        sort: str | None = None
+            
+        class Config:
               from_attributes = True 

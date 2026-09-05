@@ -1,9 +1,23 @@
 from database import Base
 from sqlalchemy.orm import relationship
 import uuid
-from sqlalchemy import DECIMAL,Numeric,Column,String,Column,ForeignKey,Integer,DateTime,TIMESTAMP,func,Enum,Boolean,Time
+from enum import Enum
+from sqlalchemy import DECIMAL,Numeric,Column,String,Column,ForeignKey,Integer,DateTime,TIMESTAMP,func,Enum as SAEnum,Boolean,Time
 from datetime import timezone
 
+
+class C_category(Enum):
+    electronics = "electronics"
+    cloths = "cloths"
+    Food = "food"
+    books = "books"
+
+
+class P_payments(Enum):
+    cash = "cash"
+    mpesa = "mpesa"
+    card = "cash"
+    bank = "bank"
 
 #######################
 #USER TABLE
@@ -105,18 +119,6 @@ class Payments(Base):
     paid_at=Column(TIMESTAMP,server_default=func.now())
 
 ##########################################
-#EUM DROP DOWNS
-
-class C_category(Enum):
-     electronics ="electronics"
-     cloths = "cloths"
-     Food ="food"
-     books ="books"
-
-class P_payments(Enum):
-     cash=    "cash"
-     mpesa = "mpesa"
-     card=  "cash"
-     bank = "bank"
+# ENUM DROP DOWNS
 
 
