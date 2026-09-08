@@ -19,6 +19,15 @@ class P_payments(Enum):
     card = "cash"
     bank = "bank"
 
+class P_status(Enum):
+    pending = "pending"
+    Success = "success"
+    failed = "failed"
+
+class Status(Enum):
+    pending = "pending"
+    completed = "completed"
+    cancelled = "cancelled"
 #######################
 #USER TABLE
 class User(Base):
@@ -80,10 +89,11 @@ class Order(Base):
 
     id = Column(Integer,primary_key=True,autoincrement=True)
     user_id=Column(Integer,ForeignKey("category.id"))
-    P_name=Column(String(50),nullable=False)
     Total_amount=Column(Numeric(10,2),nullable=False,default=0.00)
-    status=Column(String(200),nullable=False)
+    status=Column(Enum(Status),nullable=False)
+    Isactive=Column(Boolean,default=True)
     created_at=Column(TIMESTAMP,server_default=func.now())
+    cancelled_at=Column(TIMESTAMP,onupdate=func.now())
     
     
 #######################
@@ -93,7 +103,6 @@ class Order_items(Base):
       id = Column(Integer,primary_key=True,autoincrement=True)
       order_id=Column(Integer,ForeignKey("order.id"))
       product_id=Column(Integer,ForeignKey("product.id"))
-      P_name=Column(String(50),nullable=False)
       quantity=Column(Integer,nullable=False)
       price=Column(Numeric(10,2),nullable=False,default=0.00)
      
@@ -111,14 +120,17 @@ class Reviews(Base):
 #PAYMENTS TABLE
 class Payments(Base):
     __tablename__='payment'
-    id=Column(String(50),primary_key=True,nullable=True,default=lambda:str(uuid.uuid4()))
-    order_id=Column(Integer,ForeignKey("order.id"))
+    id=Column(String(50),primary_key=True,nullable=False,default=lambda:str(uuid.uuid4()))
+    order_id=Column(Integer,ForeignKey("order.id"),nullable=False)
+    phone_number = Column(String(20), nullable=False)
     amount=Column(DECIMAL(10,2),nullable=False,default=0.00)
     method=Column(Enum(P_payments),nullable=False)
-    status=Column(String(20),nullable=False)
+    status=Column(Enum(P_status),nullable=False)
+    checkout_request_id = Column(String(100), nullable=True)
+    merchant_request_id = Column(String(100), nullable=True)
+    mpesa_receipt_number = Column(String(100), nullable=True)
     paid_at=Column(TIMESTAMP,server_default=func.now())
 
-##########################################
-# ENUM DROP DOWNS
+
 
 

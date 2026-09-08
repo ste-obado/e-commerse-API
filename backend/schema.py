@@ -3,11 +3,20 @@ from  typing import Optional
 from datetime import time 
 from enum import Enum
 
-#LOGIN SCHEMA
+###############################
+#USEROLE AND ORDER STATUS ENUMS
+
 class UserRole (str,Enum):
     admin = "admin"
     user = "user"
 
+class Status(str,Enum):
+    pending = "pending"
+    completed = "completed"
+    cancelled = "cancelled"
+
+###############################
+#LOGIN SCHEMAS
 
 class register(BaseModel):
     name:str
@@ -50,6 +59,8 @@ class Userlogin(BaseModel):
     
 
 
+###############################
+#PROFILE SCHEMAS
 
 class update_profile(BaseModel):
      name: Optional[str] = None
@@ -61,12 +72,16 @@ class update_profile(BaseModel):
            if value.endswith("@mycompany.com"):
                raise ValueError("Input valid email")
            return value
-     
+
+###############################
+#REVIEW SCHEMAS
+    
 class review(BaseModel):
      comment:str
      stars:int
 
-
+###############################
+#CART SCHEMAS
 class add_cart(BaseModel):
      product_id:int
      quantity:int
@@ -74,14 +89,17 @@ class add_cart(BaseModel):
 class Update_cart(BaseModel):
      quantity:Optional[int]=None
 
-
-class add_category(BaseModel):
+###############################
+#CARTEGORY SCHEMAS
+class add_Category(BaseModel):
      C_name:str
 
 class Update_category(BaseModel):
      C_name:Optional[str]=None
 
 
+###############################
+#PRODUCTS SCHEMAS
 class add_product(BaseModel):
         cartegory_id:int
         P_name:str
@@ -102,6 +120,11 @@ class Get_products(BaseModel):
         min_price: float | None = None
         max_price: float | None = None
         sort: str | None = None
-            
+
+###############################
+#PAYMENTS SCHEMAS
+class payment(BaseModel):
+        phone_number:str 
+               
         class Config:
               from_attributes = True 

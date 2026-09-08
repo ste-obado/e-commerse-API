@@ -1,12 +1,13 @@
 #POST /products/{id}/reviews
 #GET  /products/{id}/reviews
 
-from fastapi import APIRouter,Depends,HTTPException
+from fastapi import APIRouter,Depends
 from sqlalchemy.orm import Session
 from database import get_db
 from core.protection  import get_current_user,require_user_or_admin
-from models import Reviews,User
-from schema import review,UserRole
+from models import User
+from schema import review
+from services.review_service import comment_product,get_reviews,delete_comment
 
 
 
@@ -14,52 +15,20 @@ router=APIRouter(prefix="/Review",tags=["Review"])
 
 ################################
 #any user can add a have a review 
-
-@router.post("/review/{post_id}")
+@router.post("/review/{product_id}")
 def comment_product(product_id:str,content:review,
                     db:Session=(Depends(get_db)),user:User=Depends(get_current_user)):
-   
-   #check if post exists
-   existing_review=db.query(Reviews).filter(Reviews.product_id==product_id).first()
-
-   if existing_review is None:
-       raise HTTPException(status_code=404,detail="product not found")
-   
-   new_comment=Reviews(product_id=product_id,description=review.comment,user_id=user.id)
-   db.add(new_comment)
-   db.commit()
-   db.refresh(new_comment)
-   return new_comment
+   return comment_product(product_id,content, db,user)
 
 ###############################
 #users can view other comments
-
-@router.get("get_review")
+@router.get("/reviews/{product_id}")
 def get_reviews(product_id:str,db:Session = Depends(get_db),user:User=Depends(get_current_user)):
-   content=db.query(Reviews).filter(Reviews.product_id == product_id).all()
-   return content
+   return get_reviews(product_id,db,user)
 
 ###############################
 #the admin/user  can delete posts
-
-@router.delete("/del_review")
+@router.delete("/reviews/{reviews_id}")
 def delete_comment(reviews_id:int,user:User = Depends(require_user_or_admin),
                    db:Session = Depends(get_db)):
-   
-   del_comment= db.query(Reviews).filter(Reviews.id == reviews_id).first()
-                                          
-   if del_comment is None:
-        raise HTTPException(status_code=404,detail="comment not found")
-
-  
-   if del_comment.user_id != user.id and user.role != UserRole.admin:
-        raise HTTPException(
-            status_code=403,
-            detail="You cannot delete this review"
-        )
-
-   
-   db.delete(del_comment)
-   db.commit()
-   return {"message":"comment deleted"}
-
+   return delete_comment(reviews_id,user,db)
