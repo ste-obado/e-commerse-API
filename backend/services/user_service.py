@@ -1,16 +1,29 @@
 from fastapi import HTTPException
 from models import User
+from redis_cache import redis_client
+import json
 
 #############################
 #get user profile
 def profile_view(user,db):
+    #cache check
+    cache_key=f"user:{user.email}"
+    cached=redis_client.get(cache_key)
+    if cached:
+        return{"profile":json.loads(cached)}
+    
+    #cache miss
     View=db.query(User).filter(User.id==user.id).first()
     if not View :
        raise   HTTPException(status=404,detail="'USER NOT FOUND")
-    return{"Username" : View.Username,
-           "Email":View.Email,
-           "Role":View.Role,
-           "created_at":View.created_at}
+    
+    profile=[{"Username":View.Username,
+             "Email":View.Email,
+             "Role":View.Role,
+             "created_at":View.created_at}]
+    #write on redis
+    redis_client.set(cache_key,json.dumps(profile),ex=3600)
+    return{"profile":profile}
 
 ###############################33
 #update user profile
@@ -30,6 +43,8 @@ def account_update(user2,user,db):
 
     db.commit()
     db.refresh(user_data)
+    if updated_data:
+        redis_client.hset(f"user:{user.id}",mapping=updated_data)
     return{
          "message": "Profile updated",
          "name":user_data.name,

@@ -5,7 +5,7 @@ from routers import authentication,users,reviews,products,payments,orders,catego
 from fastapi import FastAPI
 
 
-app=FastAPI()
+app=FastAPI("my first Ecommerse App")
 
 #CREATE TABLES 
 models.Base.metadata.create_all(bind=engine)
